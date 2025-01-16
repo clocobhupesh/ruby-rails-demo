@@ -38,8 +38,11 @@ gem "kamal", require: false
 gem "thruster", require: false
 
 
-gem 'bcrypt', '~> 3.1.7'
-gem 'rswag'
+gem "bcrypt", "~> 3.1.7"
+gem "rswag"
+gem "kaminari"
+gem "active_model_serializers"
+gem "jwt"
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
@@ -66,4 +69,3 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
-

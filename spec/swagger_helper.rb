@@ -22,12 +22,26 @@ RSpec.configure do |config|
         version: 'v1'
       },
       paths: {},
+      components: {
+        securitySchemes: {
+          Bearer: {
+            type: :http,
+            scheme: :bearer,
+            bearerFormat: 'JWT'
+          }
+          # api_key: {
+          #   type: :apiKey,
+          #   name: 'api_key',
+          #   in: :query
+          # }
+        }
+      },
       servers: [
         {
-          url: 'https://{defaultHost}',
+          url: 'http://{defaultHost}',
           variables: {
             defaultHost: {
-              default: 'www.example.com'
+              default: Rails.configuration.default_host || 'localhost:8080'
             }
           }
         }

@@ -14,6 +14,9 @@ RAILS_ENV := development
 
 # Build the Docker images
 build:
+	docker-compose build 
+
+force-build:
 	docker-compose build --no-cache
 
 # Start Docker containers
