@@ -1,4 +1,3 @@
-
 class UserService
   def initialize
   end

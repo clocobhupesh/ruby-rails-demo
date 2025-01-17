@@ -1,42 +1,40 @@
-class Api::V1::ArtistsController < ApplicationController
+class Api::V1::SongsController < ApplicationController
   include Paginatable
 
   before_action :authenticate
-  before_action :authorize_artist
+  before_action :authorize_song
 
   def initialize
-    @artist_service = ArtistService.new
+    @song_service = SongService.new
     super()
   end
 
-
-  # get all artists
   def index
-    artists = @artist_service.all_artists
-    @artists = paginate(artists)
+    songs = @song_service.all_songs
+    @songs = paginate(songs)
 
-    render json: @artists,
-           each_serializer: ArtistSerializer,
-           meta: paginate_meta(@artists),
+    render json: @songs,
+           each_serializer: SongSerializer,
+           meta: paginate_meta(@songs),
            adapter: :json,
            status: :ok
   end
 
-  # get artist detail
+  # get song detail
   def show
-    artist = @artist_service.find_artist(params[:id])
+    song = @song_service.find_song(params[:id])
 
-    raise ActiveRecord::RecordNotFound if artist.nil?
+    raise ActiveRecord::RecordNotFound if song.nil?
 
-    render json: artist,
-    serializer: ArtistSerializer,
+    render json: song,
+    serializer: SongSerializer,
     adapter: :json,
     status: :ok
 
   rescue ActiveRecord::RecordNotFound
     render json: {
-      error: "Artist not found",
-      message: "The artist you're looking for doesn't exist."
+      error: "Song not found",
+      message: "The song you're looking for doesn't exist."
     }, status: :not_found
 
   rescue StandardError
@@ -46,19 +44,17 @@ class Api::V1::ArtistsController < ApplicationController
     }, status: :internal_server_error
   end
 
-
-  # create artist
+  # create song
   def create
-    artist = @artist_service.create_artist(artist_params)
+    song = @song_service.create_song(song_params)
 
-    if artist.errors.any?
-      raise ActiveRecord::RecordInvalid.new(artist)
-
-    elsif artist.persisted?
+    if song.errors.any?
+      raise ActiveRecord::RecordInvalid.new(song)
+    elsif song.persisted?
       render json: {
         status: :ok,
-        data: ArtistSerializer.new(artist),
-        message: "Artist created successfully"
+        data: SongSerializer.new(song),
+        message: "Song created successfully"
       }
     end
 
@@ -77,30 +73,28 @@ class Api::V1::ArtistsController < ApplicationController
   end
 
 
-  # update artist
+  # update song
   def update
-    artist = @artist_service.find_artist(params[:id])
+    song = @song_service.find_song(params[:id])
+    raise ActiveRecord::RecordNotFound if song.nil?
+    updated_song = @song_service.update_song(song, song_params)
 
-    raise ActiveRecord::RecordNotFound if artist.nil?
+    if updated_song.errors.any?
+      raise ActiveRecord::RecordInvalid.new(updated_song)
 
-    updated_artist = @artist_service.update_artist(artist, artist_params)
-
-    if updated_artist.errors.any?
-      raise ActiveRecord::RecordInvalid.new(updated_artist)
-
-    elsif updated_artist.persisted?
+    elsif updated_song.persisted?
       render json: {
         status: :ok,
-        data: ArtistSerializer.new(updated_artist),
-        message: "Artist updated successfully"
+        data: SongSerializer.new(updated_song),
+        message: "Song updated successfully"
       }
 
     end
 
   rescue ActiveRecord::RecordNotFound
     render json: {
-      error: "Artist not found",
-      message: "The artist you're updating doesn't exist."
+      error: "Song not found",
+      message: "The song you're updating doesn't exist."
     }, status: :not_found
 
   rescue ActiveRecord::RecordInvalid => e
@@ -117,27 +111,21 @@ class Api::V1::ArtistsController < ApplicationController
     }, status: :internal_server_error
   end
 
-  # delete artist
+  # delete song
   def destroy
-    artist = @artist_service.find_artist(params[:id])
+    song = @song_service.find_song(params[:id])
 
-    raise ActiveRecord::RecordNotFound if artist.nil?
+    raise ActiveRecord::RecordNotFound if song.nil?
 
-    @artist_service.destroy_artist(artist)
+    @song_service.destroy_song(song)
     render json: {
-      message: "Artist deleted successfully"
+      message: "Song deleted successfully"
     }, status: :no_content
 
-  rescue ActiveRecord::InvalidForeignKey => e
-    render json: {
-      error: "Deletion failed",
-      message: "Cannot delete artist because they have existing songs"
-    }, status: :unprocessable_entity
-
   rescue ActiveRecord::RecordNotFound
     render json: {
-      error: "Artist not found",
-      message: "The artist you're updating doesn't exist."
+      error: "Song not found",
+      message: "The song you're updating doesn't exist."
     }, status: :not_found
 
   rescue StandardError
@@ -147,8 +135,8 @@ class Api::V1::ArtistsController < ApplicationController
     }, status: :internal_server_error
   end
 
-  def authorize_artist
-    policy = ArtistPolicy.new(current_user)
+  def authorize_song
+    policy = SongPolicy.new(current_user)
     action = action_name
 
     unless policy.public_send("#{action}?")
@@ -158,7 +146,7 @@ class Api::V1::ArtistsController < ApplicationController
 
   private
 
-  def artist_params
-    params.require(:artist).permit(:name, :bio, :genre)
+  def song_params
+    params.require(:song).permit(:title, :artist_id, :album_id, :genre, :duration, :release_date)
   end
 end

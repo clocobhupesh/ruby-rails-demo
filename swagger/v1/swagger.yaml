@@ -4,6 +4,597 @@ info:
   title: API V1
   version: v1
 paths:
+  "/api/v1/artists":
+    get:
+      summary: list artists
+      tags:
+      - Artist
+      security:
+      - Bearer: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        description: Page number for pagination
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        description: Number of items per page
+        example: 10
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: create artist
+      tags:
+      - Artist
+      security:
+      - Bearer: []
+      parameters: []
+      responses:
+        '201':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the artist
+                  example: example name
+                bio:
+                  type: string
+                  description: Bio of the artist
+                  example: example bio
+              required:
+              - name
+  "/api/v1/artists/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show artist
+      tags:
+      - Artist
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: successful
+    patch:
+      summary: update artist
+      tags:
+      - Artist
+      security:
+      - Bearer: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the artist
+                  example: example name
+                bio:
+                  type: string
+                  description: Bio of the artist
+                  example: example bio
+              required:
+              - name
+    put:
+      summary: update artist
+      tags:
+      - Artist
+      security:
+      - Bearer: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the artist
+                  example: example name
+                bio:
+                  type: string
+                  description: Bio of the artist
+                  example: example bio
+              required:
+              - name
+    delete:
+      summary: delete artist
+      tags:
+      - Artist
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: successful
+  "/api/v1/auth/assign_roles":
+    post:
+      summary: assign roles
+      tags:
+      - Auth and Authorization
+      security:
+      - Bearer: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  description: user_id
+                  example: 1
+                role_ids:
+                  type: array
+                  description: role_ids
+                  items:
+                    type: integer
+                  example:
+                  - 1
+                  - 2
+                  - 3
+                  - 4
+                  - 5
+  "/api/v1/auth/login":
+    post:
+      summary: login
+      tags:
+      - Auth and Authorization
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: username
+                  example: username
+                password:
+                  type: string
+                  description: password
+                  example: password
+  "/api/v1/auth/refresh_token":
+    post:
+      summary: refresh_token
+      tags:
+      - Auth and Authorization
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+                  description: refresh_token
+                  example: ebyfkjsdlkfj.sfksajdflkjsda;klfjk;liewfkljije
+  "/api/v1/auth/assign_permissions":
+    post:
+      summary: assign roles
+      tags:
+      - Auth and Authorization
+      security:
+      - Bearer: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role_id:
+                  type: integer
+                  description: role_id
+                  example: 1
+                permission_ids:
+                  type: array
+                  description: permission_ids
+                  items:
+                    type: integer
+                  example:
+                  - 1
+                  - 2
+                  - 3
+                  - 4
+                  - 5
+  "/api/v1/permissions":
+    get:
+      summary: list permissions
+      tags:
+      - Permissions
+      security:
+      - Bearer: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        description: Page number for pagination
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        description: Number of items per page
+        example: 10
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: create permission
+      tags:
+      - Permissions
+      security:
+      - Bearer: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  example: create
+                resource:
+                  type: string
+                  example: artist
+              required:
+              - action
+              - resource
+  "/api/v1/permissions/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show permission
+      tags:
+      - Permissions
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: successful
+    patch:
+      summary: update permission
+      tags:
+      - Permissions
+      security:
+      - Bearer: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  example: create
+                resource:
+                  type: string
+                  example: artist
+              required:
+              - action
+              - resource
+    put:
+      summary: update permission
+      tags:
+      - Permissions
+      security:
+      - Bearer: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  example: create
+                resource:
+                  type: string
+                  example: artist
+              required:
+              - action
+              - resource
+    delete:
+      summary: delete permission
+      tags:
+      - Permissions
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: successful
+  "/api/v1/roles":
+    get:
+      summary: list roles
+      tags:
+      - Roles
+      security:
+      - Bearer: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        description: Page number for pagination
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        description: Number of items per page
+        example: 10
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: create role
+      tags:
+      - Roles
+      security:
+      - Bearer: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: name
+                description:
+                  type: string
+                  example: description
+              required:
+              - name
+              - description
+  "/api/v1/roles/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show role
+      tags:
+      - Roles
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: successful
+    patch:
+      summary: update role
+      tags:
+      - Roles
+      security:
+      - Bearer: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: name
+                description:
+                  type: string
+                  example: description
+              required:
+              - name
+              - description
+    put:
+      summary: update role
+      tags:
+      - Roles
+      security:
+      - Bearer: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: name
+                description:
+                  type: string
+                  example: description
+              required:
+              - name
+              - description
+    delete:
+      summary: delete role
+      tags:
+      - Roles
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: successful
+  "/api/v1/songs":
+    get:
+      summary: list songs
+      tags:
+      - Songs
+      security:
+      - Bearer: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        description: Page number for pagination
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        description: Number of items per page
+        example: 10
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: create song
+      tags:
+      - Songs
+      security:
+      - Bearer: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: Name of the song
+                  example: song_name
+                artist_id:
+                  type: integer
+  "/api/v1/songs/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show song
+      tags:
+      - Songs
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: successful
+    patch:
+      summary: update song
+      tags:
+      - Songs
+      security:
+      - Bearer: []
+      parameters: []
+      responses:
+        '200':
+          description: successful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: Name of the song
+                  example: song_name
+                artist_id:
+                  type: integer
+    put:
+      summary: update song
+      tags:
+      - Songs
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: successful
+    delete:
+      summary: delete song
+      tags:
+      - Songs
+      security:
+      - Bearer: []
+      responses:
+        '200':
+          description: successful
   "/api/v1/users":
     get:
       summary: list users

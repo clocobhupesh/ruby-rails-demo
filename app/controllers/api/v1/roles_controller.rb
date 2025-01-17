@@ -1,42 +1,38 @@
-class Api::V1::ArtistsController < ApplicationController
+class Api::V1::RolesController < ApplicationController
   include Paginatable
 
   before_action :authenticate
-  before_action :authorize_artist
+  before_action :authorize_role
 
   def initialize
-    @artist_service = ArtistService.new
+    @role_service = RoleService.new
     super()
   end
 
+    def index
+      roles = @role_service.all_roles
+      @roles = paginate(roles)
 
-  # get all artists
-  def index
-    artists = @artist_service.all_artists
-    @artists = paginate(artists)
+      render json: @roles,
+             each_serializer: RoleSerializer,
+             meta: paginate_meta(@roles),
+             adapter: :json,
+             status: :ok
+    end
 
-    render json: @artists,
-           each_serializer: ArtistSerializer,
-           meta: paginate_meta(@artists),
-           adapter: :json,
-           status: :ok
-  end
-
-  # get artist detail
   def show
-    artist = @artist_service.find_artist(params[:id])
+    role = @role_service.find_role(params[:id])
+    raise ActiveRecord::RecordNotFound if role.nil?
 
-    raise ActiveRecord::RecordNotFound if artist.nil?
-
-    render json: artist,
-    serializer: ArtistSerializer,
+    render json: role,
+    serializer: RoleSerializer,
     adapter: :json,
     status: :ok
 
   rescue ActiveRecord::RecordNotFound
     render json: {
-      error: "Artist not found",
-      message: "The artist you're looking for doesn't exist."
+      error: "Role not found",
+      message: "The role you're looking for doesn't exist."
     }, status: :not_found
 
   rescue StandardError
@@ -46,19 +42,18 @@ class Api::V1::ArtistsController < ApplicationController
     }, status: :internal_server_error
   end
 
-
-  # create artist
+  # create role
   def create
-    artist = @artist_service.create_artist(artist_params)
+    role = @role_service.create_role(role_params)
 
-    if artist.errors.any?
-      raise ActiveRecord::RecordInvalid.new(artist)
+    if role.errors.any?
+      raise ActiveRecord::RecordInvalid.new(role)
 
-    elsif artist.persisted?
+    elsif role.persisted?
       render json: {
         status: :ok,
-        data: ArtistSerializer.new(artist),
-        message: "Artist created successfully"
+        data: RoleSerializer.new(role),
+        message: "Role created successfully"
       }
     end
 
@@ -77,22 +72,19 @@ class Api::V1::ArtistsController < ApplicationController
   end
 
 
-  # update artist
   def update
-    artist = @artist_service.find_artist(params[:id])
+    role = @role_service.find_role(params[:id])
+    raise ActiveRecord::RecordNotFound if role.nil?
+    updated_role = @role_service.update_role(role, role_params)
 
-    raise ActiveRecord::RecordNotFound if artist.nil?
+    if updated_role.errors.any?
+      raise ActiveRecord::RecordInvalid.new(updated_role)
 
-    updated_artist = @artist_service.update_artist(artist, artist_params)
-
-    if updated_artist.errors.any?
-      raise ActiveRecord::RecordInvalid.new(updated_artist)
-
-    elsif updated_artist.persisted?
+    elsif updated_role.persisted?
       render json: {
         status: :ok,
-        data: ArtistSerializer.new(updated_artist),
-        message: "Artist updated successfully"
+        data: RoleSerializer.new(updated_role),
+        message: "Role updated successfully"
       }
 
     end
@@ -117,27 +109,20 @@ class Api::V1::ArtistsController < ApplicationController
     }, status: :internal_server_error
   end
 
-  # delete artist
+  # delete role
   def destroy
-    artist = @artist_service.find_artist(params[:id])
+    role = Role.find_by(id: params[:id])
+    raise ActiveRecord::RecordNotFound if role.nil?
+    @role_service.destroy_role(role)
 
-    raise ActiveRecord::RecordNotFound if artist.nil?
-
-    @artist_service.destroy_artist(artist)
     render json: {
-      message: "Artist deleted successfully"
+      message: "Role deleted successfully"
     }, status: :no_content
 
-  rescue ActiveRecord::InvalidForeignKey => e
-    render json: {
-      error: "Deletion failed",
-      message: "Cannot delete artist because they have existing songs"
-    }, status: :unprocessable_entity
-
   rescue ActiveRecord::RecordNotFound
     render json: {
-      error: "Artist not found",
-      message: "The artist you're updating doesn't exist."
+      error: "Role not found",
+      message: "The role you're updating doesn't exist."
     }, status: :not_found
 
   rescue StandardError
@@ -147,8 +132,9 @@ class Api::V1::ArtistsController < ApplicationController
     }, status: :internal_server_error
   end
 
-  def authorize_artist
-    policy = ArtistPolicy.new(current_user)
+
+  def authorize_role
+    policy = RolePolicy.new(current_user)
     action = action_name
 
     unless policy.public_send("#{action}?")
@@ -158,7 +144,7 @@ class Api::V1::ArtistsController < ApplicationController
 
   private
 
-  def artist_params
-    params.require(:artist).permit(:name, :bio, :genre)
+  def role_params
+    params.require(:role).permit(:name, :description)
   end
 end
