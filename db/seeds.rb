@@ -7,3 +7,28 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+
+
+User.create(
+  username: "super_user",
+  password: "password",
+  email: "super_user@gmail.com"
+)
+# db/seeds.rb
+
+# Create some sample artists with random names and bios using Faker
+10.times do
+  Artist.create(
+    name: Faker::Name.name,
+    bio: Faker::Lorem.paragraph
+  )
+end
+
+
+10.times do
+  Song.create(
+    artist_id: rand(1..10),
+    title: Faker::Artist.name,
+  )
+end

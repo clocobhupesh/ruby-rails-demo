@@ -6,10 +6,10 @@ RSpec.describe 'api/v1/roles', type: :request do
       tags "Roles"
       security [ Bearer: [] ]
       produces 'application/json'
-      
-      parameter name: :page, in: :query, type: :integer, required: false, 
+
+      parameter name: :page, in: :query, type: :integer, required: false,
               description: 'Page number for pagination', example: 1
-      parameter name: :per_page, in: :query, type: :integer, required: false, 
+      parameter name: :per_page, in: :query, type: :integer, required: false,
               description: 'Number of items per page', example: 10
 
       response(200, 'successful') do
@@ -32,20 +32,20 @@ RSpec.describe 'api/v1/roles', type: :request do
       security [ Bearer: [] ]
       consumes 'application/json'
       produces 'application/json'
-      
+
       parameter name: :role, in: :body, schema: {
         type: :object,
         properties: {
           name: { type: :string, example: 'name' },
-          description: { type: :string, example: 'description' },
+          description: { type: :string, example: 'description' }
         },
-        required: ['name', 'description']
+        required: [ 'name', 'description' ]
       }
-    
+
       response(200, 'successful') do
         let(:Authorization) { "token" }
         let(:role) { { name: 'test role', description: 'test description' } }
-        
+
         after do |example|
           example.metadata[:response][:content] = {
             'application/json' => {
@@ -65,7 +65,7 @@ RSpec.describe 'api/v1/roles', type: :request do
       tags "Roles"
       security [ Bearer: [] ]
       produces 'application/json'
-      
+
       response(200, 'successful') do
         let(:Authorization) { "token" }
         let(:id) { '123' }
@@ -86,21 +86,21 @@ RSpec.describe 'api/v1/roles', type: :request do
       security [ Bearer: [] ]
       consumes 'application/json'
       produces 'application/json'
-      
+
       parameter name: :role, in: :body, schema: {
         type: :object,
         properties: {
           name: { type: :string, example: 'name' },
-          description: { type: :string, example: 'description' },
+          description: { type: :string, example: 'description' }
         },
-        required: ['name', 'description']
+        required: [ 'name', 'description' ]
       }
-    
+
       response(200, 'successful') do
         let(:Authorization) { "token" }
         let(:id) { '123' }
         let(:role) { { name: 'updated role', description: 'updated description' } }
-        
+
         after do |example|
           example.metadata[:response][:content] = {
             'application/json' => {
@@ -111,27 +111,27 @@ RSpec.describe 'api/v1/roles', type: :request do
         run_test!
       end
     end
-    
+
     put('update role') do
       tags "Roles"
       security [ Bearer: [] ]
       consumes 'application/json'
       produces 'application/json'
-      
+
       parameter name: :role, in: :body, schema: {
         type: :object,
         properties: {
           name: { type: :string, example: 'name' },
-          description: { type: :string, example: 'description' },
+          description: { type: :string, example: 'description' }
         },
-        required: ['name', 'description']
+        required: [ 'name', 'description' ]
       }
-    
+
       response(200, 'successful') do
         let(:Authorization) { "token" }
         let(:id) { '123' }
         let(:role) { { name: 'updated role', description: 'updated description' } }
-        
+
         after do |example|
           example.metadata[:response][:content] = {
             'application/json' => {
@@ -147,7 +147,7 @@ RSpec.describe 'api/v1/roles', type: :request do
       tags "Roles"
       security [ Bearer: [] ]
       produces 'application/json'
-      
+
       response(200, 'successful') do
         let(:Authorization) { "token" }
         let(:id) { '123' }
